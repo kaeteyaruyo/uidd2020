@@ -68,12 +68,24 @@
                 x: stage.width() * 0.5,
                 y: stage.height() * 0.475,
                 radius: 400,
-                strokeWidth: 4,
+                strokeWidth: 5,
                 stroke: 'rgb(225, 225, 225)',
                 opacity: 0.4,
                 fill: null,
             });
             layer.add(timer);
+
+            const loader = new Konva.Arc({
+                x: stage.width() * 0.5,
+                y: stage.height() * 0.475,
+                innerRadius: 396,
+                outerRadius: 404,
+                angle: 0,
+                rotation: -90,
+                stroke: null,
+                fill: 'rgb(255, 255, 255)',
+            });
+            layer.add(loader);
 
             const palette = new Konva.Circle({
                 x: stage.width() * 0.5,
@@ -96,44 +108,40 @@
             title.offsetY(title.height() * 0.5);
             layer.add(title);
 
-            const red = new Konva.Circle({
-                x: stage.width() * 0.35,
+            const colors = [
+                'rgb(229, 125, 108)', // red
+                'rgb(8, 53, 81)',     // blue
+                'rgb(95, 141, 142)'   // green
+            ].map((color, idx) => new Konva.Circle({
+                x: stage.width() * (0.35 + 0.15 * idx),
                 y: stage.height() * 0.85,
                 radius: 50,
                 stroke: null,
-                fill: 'rgb(229, 125, 108)',
+                fill: color,
                 opacity: 0.7,
                 draggable: true,
-            });
-            red.initX = red.x();
-            red.initY = red.y();
-            layer.add(red);
+            }));
 
-            const blue = new Konva.Circle({
-                x: stage.width() * 0.5,
-                y: stage.height() * 0.85,
-                radius: 50,
-                stroke: null,
-                fill: 'rgb(8, 53, 81)',
-                opacity: 0.7,
-                draggable: true,
-            });
-            blue.initX = blue.x();
-            blue.initY = blue.y();
-            layer.add(blue);
+            colors.forEach(color => {
+                color.initX = color.x();
+                color.initY = color.y();
+                color.on('mouseover', () => {
+                    document.body.style.cursor = 'pointer';
+                });
+                color.on('mouseout', () => {
+                    document.body.style.cursor = 'default';
+                });
+                layer.add(color);
+            })
 
-            const green = new Konva.Circle({
-                x: stage.width() * 0.65,
-                y: stage.height() * 0.85,
-                radius: 50,
-                stroke: null,
-                fill: 'rgb(95, 141, 142)',
-                opacity: 0.7,
-                draggable: true,
-            });
-            green.initX = green.x();
-            green.initY = green.y();
-            layer.add(green);
+            const angularSpeed = 360 / 5;
+            const loading = new Konva.Animation(function(frame) {
+                loader.angle(loader.angle() + (frame.timeDiff * angularSpeed) / 1000);
+                if(loader.angle() >= 360){
+                    loading.stop();
+                    loader.angle(0);
+                }
+            }, layer);
 
             let previousShape = null;
             let draggingShape = null;
@@ -143,6 +151,7 @@
                 draggingShape.moveTo(tempLayer);
                 draggingShape.opacity(1);
                 layer.draw();
+                document.body.style.cursor = 'move';
             });
 
             stage.on('dragmove', e => {
@@ -227,6 +236,7 @@
                 e.target.moveTo(layer);
                 layer.draw();
                 tempLayer.draw();
+                document.body.style.cursor = 'default';
             });
 
             stage.on('dragenter', function(e) {
@@ -252,6 +262,7 @@
                     e.target.opacity(0.3);
                     title.fill('rgb(241, 241, 241)');
                     draggingShape = null;
+                    loading.start();
                 }
                 layer.draw();
             });
