@@ -64,6 +64,35 @@
             const tempLayer = new Konva.Layer();
             stage.add(tempLayer);
 
+            const colors = [
+                'rgb(229, 125, 108)', // red
+                'rgb(8, 53, 81)',     // blue
+                'rgb(95, 141, 142)'   // green
+            ];
+
+            const colorLoaders = colors.map(color => new Konva.Arc({
+                x: stage.width() * 0.5,
+                y: stage.height() * 0.475,
+                innerRadius: 0,
+                outerRadius: 0,
+                angle: 360,
+                rotation: -90,
+                stroke: null,
+                fill: color,
+                opacity: 0.3,
+            }));
+
+            colorLoaders.forEach((loader, idx) => {
+                layer.add(loader);
+                loader.colorIndex = idx;
+                loader.expand = new Konva.Tween({
+                    node: loader,
+                    outerRadius: 360,
+                    easing: Konva.Easings.EaseOut,
+                    duration: 0.5,
+                });
+            });
+
             const timer = new Konva.Circle({
                 x: stage.width() * 0.5,
                 y: stage.height() * 0.475,
@@ -87,6 +116,15 @@
             });
             layer.add(loader);
 
+            const angularSpeed = 360 / 5;
+            const loading = new Konva.Animation(function(frame) {
+                loader.angle(loader.angle() + (frame.timeDiff * angularSpeed) / 1000);
+                if(loader.angle() >= 360){
+                    loading.stop();
+                    loader.angle(0);
+                }
+            }, layer);
+
             const palette = new Konva.Circle({
                 x: stage.width() * 0.5,
                 y: stage.height() * 0.475,
@@ -96,6 +134,36 @@
                 opacity: 0.3,
             });
             layer.add(palette);
+
+            palette.highlight = new Konva.Tween({
+                node: palette,
+                opacity: 0.5,
+                easing: Konva.Easings.EaseOut,
+                duration: 0.25,
+            });
+
+            const colorOptions = colors.map((color, idx) => new Konva.Circle({
+                x: stage.width() * (0.35 + 0.15 * idx),
+                y: stage.height() * 0.85,
+                radius: 50,
+                stroke: null,
+                fill: color,
+                opacity: 0.7,
+                draggable: true,
+            }));
+
+            colorOptions.forEach((option, idx) => {
+                option.initX = option.x();
+                option.initY = option.y();
+                option.colorIndex = idx;
+                option.on('mouseover', () => {
+                    document.body.style.cursor = 'pointer';
+                });
+                option.on('mouseout', () => {
+                    document.body.style.cursor = 'default';
+                });
+                layer.add(option);
+            });
 
             const title = new Konva.Text({
                 x: palette.x(),
@@ -107,41 +175,6 @@
             title.offsetX(title.width() * 0.5);
             title.offsetY(title.height() * 0.5);
             layer.add(title);
-
-            const colors = [
-                'rgb(229, 125, 108)', // red
-                'rgb(8, 53, 81)',     // blue
-                'rgb(95, 141, 142)'   // green
-            ].map((color, idx) => new Konva.Circle({
-                x: stage.width() * (0.35 + 0.15 * idx),
-                y: stage.height() * 0.85,
-                radius: 50,
-                stroke: null,
-                fill: color,
-                opacity: 0.7,
-                draggable: true,
-            }));
-
-            colors.forEach(color => {
-                color.initX = color.x();
-                color.initY = color.y();
-                color.on('mouseover', () => {
-                    document.body.style.cursor = 'pointer';
-                });
-                color.on('mouseout', () => {
-                    document.body.style.cursor = 'default';
-                });
-                layer.add(color);
-            })
-
-            const angularSpeed = 360 / 5;
-            const loading = new Konva.Animation(function(frame) {
-                loader.angle(loader.angle() + (frame.timeDiff * angularSpeed) / 1000);
-                if(loader.angle() >= 360){
-                    loading.stop();
-                    loader.angle(0);
-                }
-            }, layer);
 
             let previousShape = null;
             let draggingShape = null;
@@ -228,9 +261,12 @@
                         },
                         true
                     );
+                    e.target.visible(false);
+                }
+                else {
+                    e.target.opacity(0.7);
                 }
                 previousShape = null;
-                e.target.opacity(0.7);
                 e.target.x(e.target.initX);
                 e.target.y(e.target.initY);
                 e.target.moveTo(layer);
@@ -240,14 +276,15 @@
             });
 
             stage.on('dragenter', function(e) {
-                if(e.target === palette)
-                    e.target.opacity(0.5);
+                if(e.target === palette){
+                    palette.highlight.play();
+                }
                 layer.draw();
             });
 
             stage.on('dragleave', function(e) {
                 if(e.target === palette){
-                    e.target.opacity(0.3);
+                    palette.highlight.reverse();
                 }
                 layer.draw();
             });
@@ -258,8 +295,11 @@
 
             stage.on('drop', function(e) {
                 if(e.target === palette){
-                    e.target.fill(draggingShape.fill());
-                    e.target.opacity(0.3);
+                    console.log('palette')
+                    e.target.visible(false);
+                    colorLoaders[draggingShape.colorIndex].expand.play();
+                    console.log(draggingShape)
+
                     title.fill('rgb(241, 241, 241)');
                     draggingShape = null;
                     loading.start();
