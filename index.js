@@ -99,13 +99,7 @@ const colorLoaders = colors.map(color => new Konva.Arc({
 colorLoaders.forEach((loader, idx) => {
     layer.add(loader);
     loader.colorIndex = idx;
-    loader.expand = new Konva.Tween({
-        node: loader,
-        outerRadius: 360,
-        easing: Konva.Easings.EaseOut,
-        duration: 0.5,
-    });
-    loader.expand = new Konva.Tween({
+    loader.toWhole = new Konva.Tween({
         node: loader,
         outerRadius: 360,
         easing: Konva.Easings.EaseOut,
@@ -283,14 +277,51 @@ stage.on('dragover', function(e) {
     layer.draw();
 });
 
-stage.on('drop', function(e) {
+const droppedColor = [];
+stage.on('drop', async function(e) {
     if(e.target === dropArea){
         palette.visible(false);
         dropArea.highlight.reset();
-        colorLoaders[draggingShape.colorIndex].expand.play();
-        title.fill('rgb(241, 241, 241)');
+        droppedColor.push(colorLoaders[draggingShape.colorIndex]);
+        if(droppedColor.length === 1){
+            droppedColor[0].toWhole.play();
+            title.fill('rgb(241, 241, 241)');
+            loading.start();
+            }
+        else if(droppedColor.length === 2){
+            droppedColor[1].angle(0);
+            droppedColor[1].rotation(90);
+            droppedColor[1].outerRadius(360);
+            droppedColor[1].scaleX(-1);
+            droppedColor.forEach(loader => {
+                loader.toHalf = new Konva.Tween({
+                    node: loader,
+                    angle: 180,
+                    easing: Konva.Easings.EaseOut,
+                    duration: 0.5,
+                });
+                loader.toHalf.play();
+            });
+        }
+        else if(droppedColor.length === 3){
+            droppedColor[1].scaleX(1);
+            droppedColor[2].angle(0);
+            droppedColor[2].rotation(90);
+            droppedColor[2].outerRadius(360);
+            droppedColor[2].scaleX(-1);
+            droppedColor.forEach((loader, idx) => {
+                loader.toHalf = null;
+                loader.toThird = new Konva.Tween({
+                    node: loader,
+                    angle: 120,
+                    rotation: -90 + (60 * (!!idx) + 60 * idx),
+                    easing: Konva.Easings.EaseOut,
+                    duration: 0.5,
+                });
+                loader.toThird.play();
+            });
+        }
         draggingShape = null;
-        loading.start();
     }
     layer.draw();
 });
