@@ -149,13 +149,21 @@ colorOptions.forEach((option, idx) => {
     option.initX = option.x();
     option.initY = option.y();
     option.colorIndex = idx;
+    layer.add(option);
+    option.highlight = new Konva.Tween({
+        node: option,
+        opacity: 1,
+        easing: Konva.Easings.EaseOut,
+        duration: 0.25,
+    });
     option.on('mouseover', () => {
         document.body.style.cursor = 'pointer';
+        option.highlight.play();
     });
     option.on('mouseout', () => {
         document.body.style.cursor = 'default';
+        option.highlight.reverse();
     });
-    layer.add(option);
 });
 
 const title = new Konva.Text({
@@ -175,7 +183,6 @@ let draggingShape = null;
 stage.on('dragstart', e => {
     draggingShape = e.target;
     draggingShape.moveTo(tempLayer);
-    draggingShape.opacity(1);
     layer.draw();
     document.body.style.cursor = 'move';
 });
@@ -258,9 +265,6 @@ stage.on('dragend', e => {
     if(shape === dropArea){
         e.target.visible(false);
     }
-    else {
-        e.target.opacity(0.7);
-    }
     previousShape = null;
     e.target.x(e.target.initX);
     e.target.y(e.target.initY);
@@ -288,7 +292,7 @@ stage.on('dragover', function(e) {
     layer.draw();
 });
 
-const droppedColor = [];
+let droppedColor = [];
 stage.on('drop', function(e) {
     if(e.target === dropArea){
         palette.visible(false);
@@ -299,7 +303,7 @@ stage.on('drop', function(e) {
             droppedColor[0].toWhole.play();
             title.fill('rgb(241, 241, 241)');
             loading.start();
-            }
+        }
         else if(droppedColor.length === 2){
             droppedColor[1].angle(0);
             droppedColor[1].rotation(90);
@@ -360,6 +364,21 @@ function moveRight(){
 }
 
 function closeDisplay(){
+    colorOptions.forEach(option => {
+        option.visible(true);
+    });
+    colorLoaders.forEach(loader => {
+        console.log(loader)
+        loader.outerRadius(0);
+        loader.angle(360);
+        loader.rotation(-90);
+        loader.scaleX(1);
+    });
+    droppedColor = [];
+    palette.visible(true);
+    title.fill('rgb(102, 102, 102)');
+    layer.draw();
+
     const elements = Array.from(document.querySelectorAll('.onoverlay'))
     elements.forEach(element => element.classList.remove('onoverlay'));
 }
