@@ -264,7 +264,7 @@ stage.on('dragend', e => {
             true
         );
     }
-    if(shape === dropArea){
+    if(shape === dropArea || shape === title){
         e.target.visible(false);
     }
     previousShape = null;
