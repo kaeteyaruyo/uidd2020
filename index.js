@@ -295,6 +295,7 @@ stage.on('drop', function(e) {
         dropArea.highlight.reset();
         droppedColor.push(colorLoaders[draggingShape.colorIndex]);
         if(droppedColor.length === 1){
+            document.querySelector('#main__shadow').className = 'onoverlay';
             droppedColor[0].toWhole.play();
             title.fill('rgb(241, 241, 241)');
             loading.start();
@@ -343,20 +344,22 @@ whenFontIsLoaded(function() {
 });
 
 function openDisplay(){
-    document.querySelector(`#${ droppedColor.map(loader => loader.name()).sort((a, b) => a > b ? 1 : -1).join('_') }`).classList.add('visible');
+    document.querySelector(`#${ droppedColor.map(loader => loader.name()).sort((a, b) => a > b ? 1 : -1).join('_') }`).classList.add('onoverlay');
+    document.querySelector('#main__palette').className = 'onoverlay';
 }
 
 function moveLeft(){
-    const image = document.querySelector('.visible .display__gallery--image');
+    const image = document.querySelector('.onoverlay .display__gallery--image');
     image.style.transform = 'translateX(0px)';
 }
 
 function moveRight(){
-    const image = document.querySelector('.visible .display__gallery--image');
+    const image = document.querySelector('.onoverlay .display__gallery--image');
     let overflow = image.width - window.innerWidth;
     image.style.transform = `translateX(-${ overflow }px)`
 }
 
 function closeDisplay(){
-    document.querySelector('.visible').classList.remove('visible');
+    const elements = Array.from(document.querySelectorAll('.onoverlay'))
+    elements.forEach(element => element.classList.remove('onoverlay'));
 }

@@ -14,10 +14,39 @@ body {
     overflow: hidden;
 }
 
+#main__shadow {
+    display: grid;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    top: -2.5%;
+    transform: scale(0, 0);
+    transition: all 1.5s ease-out;
+}
+
+#main__shadow.onoverlay {
+    transform: scale(2.2, 2.2);
+}
+
+#main__shadow > img {
+    justify-self: center;
+    align-self: center;
+    border-radius: 50%;
+    width: 100vh;
+    height: 100vh;
+}
+
 #main__palette {
     display: block;
     width: 100%;
     height: 100%;
+    transform: translateY(0);
+    transition: all 1.5s ease-out;
+}
+
+#main__palette.onoverlay {
+    transform: translateY(-100%);
 }
 
 .main__display {
@@ -32,7 +61,7 @@ body {
     transition: all 1.5s ease-out;
 }
 
-.main__display.visible {
+.main__display.onoverlay {
     transform: translateY(0);
 }
 
