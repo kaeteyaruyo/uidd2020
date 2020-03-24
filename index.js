@@ -65,6 +65,7 @@ const loading = new Konva.Animation(function(frame) {
     if(loader.angle() >= 360){
         loading.stop();
         loader.angle(0);
+        openDisplay();
     }
 }, layer);
 
@@ -79,12 +80,22 @@ const palette = new Konva.Circle({
 layer.add(palette);
 
 const colors = [
-    'rgb(229, 125, 108)', // red
-    'rgb(8, 53, 81)',     // blue
-    'rgb(95, 141, 142)'   // green
+    {
+        hex:  'rgb(229, 125, 108)',
+        name: 'coral',
+    },
+    {
+        hex:  'rgb(8, 53, 81)',
+        name: 'blue',
+    },
+    {
+        hex:  'rgb(95, 141, 142)',
+        name: 'green',
+    },
 ];
 
 const colorLoaders = colors.map(color => new Konva.Arc({
+    name: color.name,
     x: stage.width() * 0.5,
     y: stage.height() * 0.475,
     innerRadius: 0,
@@ -92,7 +103,7 @@ const colorLoaders = colors.map(color => new Konva.Arc({
     angle: 360,
     rotation: -90,
     stroke: null,
-    fill: color,
+    fill: color.hex,
     opacity: 0.3,
 }));
 
@@ -129,7 +140,7 @@ const colorOptions = colors.map((color, idx) => new Konva.Circle({
     y: stage.height() * 0.85,
     radius: 50,
     stroke: null,
-    fill: color,
+    fill: color.hex,
     opacity: 0.7,
     draggable: true,
 }));
@@ -278,7 +289,7 @@ stage.on('dragover', function(e) {
 });
 
 const droppedColor = [];
-stage.on('drop', async function(e) {
+stage.on('drop', function(e) {
     if(e.target === dropArea){
         palette.visible(false);
         dropArea.highlight.reset();
@@ -330,3 +341,22 @@ whenFontIsLoaded(function() {
     title.fontFamily('adobe-garamond-pro');
     layer.draw();
 });
+
+function openDisplay(){
+    document.querySelector(`#${ droppedColor.map(loader => loader.name()).sort((a, b) => a > b ? 1 : -1).join('_') }`).classList.add('visible');
+}
+
+function moveLeft(){
+    const image = document.querySelector('.visible .display__gallery--image');
+    image.style.transform = 'translateX(0px)';
+}
+
+function moveRight(){
+    const image = document.querySelector('.visible .display__gallery--image');
+    let overflow = image.width - window.innerWidth;
+    image.style.transform = `translateX(-${ overflow }px)`
+}
+
+function closeDisplay(){
+    document.querySelector('.visible').classList.remove('visible');
+}

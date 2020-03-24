@@ -1,0 +1,22 @@
+{
+  "name": "color-your-life",
+  "version": "1.0.0",
+  "description": "uidd2020",
+  "main": "''",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaeteyaruyo/uidd2020.git"
+  },
+  "author": "kinoe_T",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kaeteyaruyo/uidd2020/issues"
+  },
+  "homepage": "https://github.com/kaeteyaruyo/uidd2020#readme",
+  "dependencies": {
+    "pug": "^2.0.4"
+  }
+}
