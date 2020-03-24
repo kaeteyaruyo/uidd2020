@@ -29,6 +29,8 @@ const stage = new Konva.Stage({
     width: window.innerWidth,
     height: window.innerHeight,
 });
+stage.initWidth = stage.width();
+stage.initHeight = stage.height();
 
 const layer = new Konva.Layer();
 stage.add(layer);
@@ -294,7 +296,7 @@ stage.on('dragover', function(e) {
 
 let droppedColor = [];
 stage.on('drop', function(e) {
-    if(e.target === dropArea){
+    if(e.target === dropArea || e.target === title){
         palette.visible(false);
         dropArea.highlight.reset();
         droppedColor.push(colorLoaders[draggingShape.colorIndex]);
@@ -342,11 +344,6 @@ stage.on('drop', function(e) {
     layer.draw();
 });
 
-whenFontIsLoaded(function() {
-    title.fontFamily('adobe-garamond-pro');
-    layer.draw();
-});
-
 function openDisplay(){
     document.querySelector(`#${ droppedColor.map(loader => loader.name()).sort((a, b) => a > b ? 1 : -1).join('_') }`).classList.add('onoverlay');
     document.querySelector('#main__palette').className = 'onoverlay';
@@ -382,3 +379,19 @@ function closeDisplay(){
     const elements = Array.from(document.querySelectorAll('.onoverlay'))
     elements.forEach(element => element.classList.remove('onoverlay'));
 }
+
+function fitStageIntoParentContainer() {
+    const scale = document.querySelector('body').offsetWidth / stage.initWidth;
+    stage.width(stage.initWidth * scale);
+    stage.height(stage.initHeight * scale);
+    stage.scale({ x: scale, y: scale });
+    stage.draw();
+}
+
+whenFontIsLoaded(function() {
+    title.fontFamily('adobe-garamond-pro');
+    layer.draw();
+});
+
+fitStageIntoParentContainer();
+window.addEventListener('resize', fitStageIntoParentContainer);
