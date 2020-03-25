@@ -38,10 +38,11 @@ stage.add(layer);
 const tempLayer = new Konva.Layer();
 stage.add(tempLayer);
 
+const circleRadius = Math.min(400, window.innerWidth / 2 - 10, window.innerHeight / 2 - 10);
 const timer = new Konva.Circle({
     x: stage.width() * 0.5,
     y: stage.height() * 0.475,
-    radius: 400,
+    radius: circleRadius,
     strokeWidth: 5,
     stroke: 'rgb(225, 225, 225)',
     opacity: 0.4,
@@ -52,8 +53,8 @@ layer.add(timer);
 const loader = new Konva.Arc({
     x: stage.width() * 0.5,
     y: stage.height() * 0.475,
-    innerRadius: 396,
-    outerRadius: 404,
+    innerRadius: circleRadius - 4,
+    outerRadius: circleRadius + 4,
     angle: 0,
     rotation: -90,
     stroke: null,
@@ -74,7 +75,7 @@ const loading = new Konva.Animation(function(frame) {
 const palette = new Konva.Circle({
     x: stage.width() * 0.5,
     y: stage.height() * 0.475,
-    radius: 360,
+    radius: circleRadius - 40,
     stroke: null,
     fill: 'rgb(225, 225, 225)',
     opacity: 0.3,
@@ -114,7 +115,7 @@ colorLoaders.forEach((loader, idx) => {
     loader.colorIndex = idx;
     loader.toWhole = new Konva.Tween({
         node: loader,
-        outerRadius: 360,
+        outerRadius: circleRadius - 40,
         easing: Konva.Easings.EaseOut,
         duration: 0.5,
     });
@@ -123,7 +124,7 @@ colorLoaders.forEach((loader, idx) => {
 const dropArea = new Konva.Circle({
     x: stage.width() * 0.5,
     y: stage.height() * 0.475,
-    radius: 360,
+    radius: circleRadius - 40,
     stroke: null,
     fill: 'rgb(255, 255, 255)',
     opacity: 0,
@@ -138,9 +139,9 @@ dropArea.highlight = new Konva.Tween({
 });
 
 const colorOptions = colors.map((color, idx) => new Konva.Circle({
-    x: stage.width() * (0.35 + 0.15 * idx),
+    x: stage.width() * 0.5 + (idx - 1) * circleRadius * 0.6,
     y: stage.height() * 0.85,
-    radius: 50,
+    radius: circleRadius * 0.15,
     stroke: null,
     fill: color.hex,
     opacity: 0.7,
@@ -173,7 +174,7 @@ const title = new Konva.Text({
     y: palette.y(),
     fill: 'rgb(102, 102, 102)',
     text: 'Color your life',
-    fontSize: 72,
+    fontSize: circleRadius * 0.2,
 });
 title.offsetX(title.width() * 0.5);
 title.offsetY(title.height() * 0.5);
@@ -309,7 +310,7 @@ stage.on('drop', function(e) {
         else if(droppedColor.length === 2){
             droppedColor[1].angle(0);
             droppedColor[1].rotation(90);
-            droppedColor[1].outerRadius(360);
+            droppedColor[1].outerRadius(circleRadius - 40);
             droppedColor[1].scaleX(-1);
             droppedColor.forEach(loader => {
                 loader.toHalf = new Konva.Tween({
@@ -325,7 +326,7 @@ stage.on('drop', function(e) {
             droppedColor[1].scaleX(1);
             droppedColor[2].angle(0);
             droppedColor[2].rotation(90);
-            droppedColor[2].outerRadius(360);
+            droppedColor[2].outerRadius(circleRadius - 40);
             droppedColor[2].scaleX(-1);
             droppedColor.forEach((loader, idx) => {
                 loader.toHalf = null;
@@ -365,7 +366,6 @@ function closeDisplay(){
         option.visible(true);
     });
     colorLoaders.forEach(loader => {
-        console.log(loader)
         loader.outerRadius(0);
         loader.angle(360);
         loader.rotation(-90);
