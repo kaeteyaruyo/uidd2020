@@ -1,22 +1,69 @@
 {
   "name": "color-your-life",
   "version": "1.0.0",
+  "private": true,
   "description": "uidd2020",
-  "main": "''",
+  "author": {
+    "name": "kinoe_T"
+  },
   "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kaeteyaruyo/uidd2020.git"
+  "main": "''",
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "konva": "^8.3.1",
+    "vue": "^2.6.11",
+    "vue-konva": "^2.1.7"
   },
-  "author": "kinoe_T",
-  "license": "ISC",
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^6.2.2",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
+    "vue-cli-plugin-pug": "~2.0.0",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "@vue/standard"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "_id": "color-your-life@1.0.0",
   "bugs": {
     "url": "https://github.com/kaeteyaruyo/uidd2020/issues"
   },
   "homepage": "https://github.com/kaeteyaruyo/uidd2020#readme",
-  "dependencies": {
-    "pug": "^2.0.4"
+  "license": "ISC",
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaeteyaruyo/uidd2020.git"
   }
 }
